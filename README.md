@@ -1,1 +1,1 @@
-# here will be C# port from other reository's java version
+# C# port of JSocketServer 
