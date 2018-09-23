@@ -2,7 +2,7 @@ namespace cssocketserver.server.core
 {
 
     using serverconfig = server.config;
-    using server.utils.FileUtils;
+    using serverutils = server.utils;
 
     using java.net.InetAddress;
     using java.net.ServerSocket;
@@ -26,8 +26,8 @@ namespace cssocketserver.server.core
         {
             try
             {
-                Server.setConfig(new ServerConfig("config" + FileUtils.FILE_SEPARATOR + "server.xml"));
-                setServerSocket(new ServerSocket(Integer.parseInt(config.get("port"))));
+                Server.setConfig(new serverconfig.ServerConfig("config" + FileUtils.FILE_SEPARATOR + "server.xml"));
+                setServerSocket(new ServerSocket(int.TryParse(config.get("port"))));
             }
             catch (IOException e)
             {
@@ -64,12 +64,12 @@ namespace cssocketserver.server.core
             }
         }
 
-        public static ServerConfig getConfig()
+        public static serverconfig.ServerConfig getConfig()
         {
             return config;
         }
 
-        public static void setConfig(ServerConfig config)
+        public static void setConfig(serverconfig.ServerConfig config)
         {
             Server.config = config;
         }
@@ -79,7 +79,7 @@ namespace cssocketserver.server.core
             Console.Out.WriteLine("Andrew (Web)Socket(s) Server v. 1.1");
 
             startModules(); /* todo allow rts cli , -restart,-stop,-start */
-            
+
             while (true)
             {
                 try

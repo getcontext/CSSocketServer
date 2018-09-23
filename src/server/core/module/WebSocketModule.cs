@@ -1,25 +1,16 @@
 namespace cssocketserver.server.core.module
 {
 
-
-    //using server.core;
-    using cssocketserver.server.core.Module;
-    using cssocketserver.server.core.WebSocketConnection;
+    using servercore = server.core;
 
     using javax.xml.bind.DatatypeConverter;
-    using java.io.IOException;
     using java.io.ObjectInputStream;
     using java.io.ObjectOutputStream;
     using java.net.ServerSocket;
     using java.net.Socket;
     using java.security.MessageDigest;
-    using java.security.NoSuchAlgorithmException;
-    using java.util.Scanner;
-    using java.util.regex.Matcher;
-    using java.util.regex.Pattern;
 
-
-    abstract class WebSocketModule : Module, WebSocketConnection
+    public abstract class WebSocketModule : servercore.Module, servercore.WebSocketConnection
     {
         protected string secWebSocketKey;
 

@@ -5,7 +5,7 @@ namespace cssocketserver.server.core
      */
     public interface WebSocketConnection : SocketConnection
     {
-        int MAX_BUFFER = 5000;
+        public const int MAX_BUFFER = 5000;
 
         void sendHandshake();
         bool isHandshake();

@@ -23,7 +23,7 @@ namespace cssocketserver.server.core
         protected string response;
         protected string request;
         protected bool close = false;
-        protected int instanceNo;
+        protected int instanceNo; //!imp getMaxInstanceNo
         protected bool stop = false;
         protected java.net.Socket client;
         protected ServerSocket serverSocket;

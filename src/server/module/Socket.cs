@@ -8,14 +8,14 @@ namespace cssocketserver.server.module
      */
     public sealed class Socket : servercoremodule.SocketModule
     {
-        public const String MODULE_NAME = "socket";
+        public const string MODULE_NAME = "socket";
 
         public Socket(ServerSocket serverSocket)
         {
             super(serverSocket);
         }
 
-        public String getId()
+        public string getId()
         {
             return MODULE_NAME;
         }
@@ -30,8 +30,8 @@ namespace cssocketserver.server.module
             try
             {
                 setClient(client);
-                outputStream = new ObjectOutputStream(getClient().getOutputStream());
-                inputStream = new ObjectInputStream(getClient().getInputStream());
+                OutputStream = new ObjectOutputStream(getClient().getOutputStream());
+                InputStream = new ObjectInputStream(getClient().getInputStream());
             }
             catch (IOException e)
             {
@@ -57,7 +57,7 @@ namespace cssocketserver.server.module
             {
                 receive();
                 broadcast();
-                outputStream.flush();
+                OutputStream.flush();
                 
                 try
                 {
@@ -95,7 +95,7 @@ namespace cssocketserver.server.module
 
         }
 
-        public void broadcast(String data)
+        public void broadcast(string data)
         {
             //            response = process(request);
             //            out.writeObject(response);

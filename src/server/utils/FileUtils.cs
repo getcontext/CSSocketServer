@@ -1,4 +1,4 @@
-namespace server.utils
+namespace cssocketserver.server.utils
 {
 
     using java.io.File;

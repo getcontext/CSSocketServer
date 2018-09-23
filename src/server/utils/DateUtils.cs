@@ -1,10 +1,8 @@
-namespace server.utils
+namespace cssocketserver.server.utils
 {
 
     using java.text.SimpleDateFormat;
-
     using java.util.Date;
-
 
     public class DateUtils
     {

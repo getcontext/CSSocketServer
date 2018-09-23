@@ -1,5 +1,9 @@
 namespace cssocketserver.server.module
 {
+    using serverconfig = server.config;
+    using servercoremodule = server.core.module;
+    using serverutils = server.utils;
+
     using java.io.ObjectInputStream;
     using java.io.ObjectOutputStream;
     using java.net.ServerSocket;
@@ -11,9 +15,9 @@ namespace cssocketserver.server.module
     /**
      * @author andrzej.salamon@gmail.com
      */
-    public sealed class WebSocket : cssocketserver.server.core.module.WebSocketModule
+    public sealed class WebSocket : servercoremodule.WebSocketModule
     {
-        public const String MODULE_NAME = "websocket";
+        public const string MODULE_NAME = "websocket";
 
 
         public WebSocket(ServerSocket serverSocket)
@@ -21,7 +25,7 @@ namespace cssocketserver.server.module
             super(serverSocket);
         }
 
-        public String getId()
+        public string getId()
         {
             return MODULE_NAME;
         }
