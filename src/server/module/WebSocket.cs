@@ -1,11 +1,9 @@
 namespace cssocketserver.server.module
 {
-    using java.io.IOException;
     using java.io.ObjectInputStream;
     using java.io.ObjectOutputStream;
     using java.net.ServerSocket;
     using java.net.Socket;
-    using java.security.NoSuchAlgorithmException;
     using java.util.Scanner;
 
     // using server.core.*;

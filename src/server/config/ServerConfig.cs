@@ -5,10 +5,6 @@ using server.utils.FileUtils;
 
 using java.io.File;
 
-using java.io.IOException;
-using java.util.HashMap;
-using java.util.Map;
-
 using javax.xml.parsers.DocumentBuilder;
 using javax.xml.parsers.DocumentBuilderFactory;
 using javax.xml.parsers.ParserConfigurationException;
@@ -22,8 +18,8 @@ using org.xml.sax.SAXException;
 using org.xml.sax.SAXParseException;
 
 
-class ServerConfig {
-    private Map<string, string> parameters = new HashMap<string, string>();
+public class ServerConfig: Config {
+    private Map<string, string> parameters = new Dictionary<string, string>();
 
     public ServerConfig(string file) {
         read(file);

@@ -1,18 +1,12 @@
 namespace cssocketserver.server.core
 {
 
-    using server.config.ServerConfig;
+    using serverconfig = server.config;
     using server.utils.FileUtils;
 
-    using java.io.IOException;
     using java.net.InetAddress;
     using java.net.ServerSocket;
-    using java.net.UnknownHostException;
-    using java.util.List;
-    using java.util.ArrayList;
 
-    // using server.module.*;
-    //using server.module.WebSocket;
 
     /**
      * @author andrzej.salamon@gmail.com
@@ -22,11 +16,11 @@ namespace cssocketserver.server.core
         private ServerSocket serverSocket = null;
         const string IP = getIp();
 
-        private static ServerConfig config;
+        private static serverconfig.ServerConfig config;
 
         //    private Socket client;
         //	private SocketConnection connection;
-        private List<Connection> connections = new ArrayList<Connection>();
+        private List<Connection> connections = new List<Connection>();
 
         public Server()
         {
@@ -83,7 +77,9 @@ namespace cssocketserver.server.core
         public void run()
         {
             Console.Out.WriteLine("Andrew (Web)Socket(s) Server v. 1.1");
-            startModules();
+
+            startModules(); /* todo allow rts cli , -restart,-stop,-start */
+            
             while (true)
             {
                 try

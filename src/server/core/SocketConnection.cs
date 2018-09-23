@@ -1,7 +1,6 @@
 namespace cssocketserver.server.core
 {
 
-    using java.io.IOException;
     using java.net.Socket;
 
     /**

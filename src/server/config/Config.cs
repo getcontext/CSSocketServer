@@ -1,10 +1,10 @@
 namespace cssocketserver.server.config
 {
-    using java.util.HashMap;
+    using java.util.Dictionary;
 
     public class Config
     {
-        private static HashMap<string, Config> config = new HashMap<string, Config>();
+        private static Dictionary<string, Config> config = new Dictionary<string, Config>();
 
         protected Config()
         {
@@ -16,12 +16,12 @@ namespace cssocketserver.server.config
             return new Config();
         }
 
-        public static HashMap<string, Config> get()
+        public static Dictionary<string, Config> get()
         {
             return config;
         }
 
-        public static void set(HashMap<string, Config> config)
+        public static void set(Dictionary<string, Config> config)
         {
             Config.config = config;
         }

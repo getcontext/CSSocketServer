@@ -1,9 +1,5 @@
 namespace cssocketserver.server.core
 {
-
-    using java.io.IOException;
-    using java.security.NoSuchAlgorithmException;
-
     /**
      * Created by wizard on 6/11/17. 
      */

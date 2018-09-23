@@ -6,10 +6,6 @@ namespace cssocketserver.server.core
     using java.net.ServerSocket;
     using java.net.Socket;
 
-    using static cssocketserver.server.core.Connection;
-
-    using static cssocketserver.server.module.WebSocket.MODULE_NAME; //@todo alias? or problem
-
     /**
      * @todo add factory
      */
@@ -18,9 +14,9 @@ namespace cssocketserver.server.core
         protected static int counter = 0;
         protected readonly Thread thread;
 
-        protected ObjectOutputStream outputStream;
+        private ObjectOutputStream outputStream;
 
-        protected ObjectInputStream inputStream;
+        private ObjectInputStream inputStream;
         protected byte[] requestByte;
         protected byte[] responseByte;
         protected byte[] frame = new byte[10];
@@ -31,6 +27,9 @@ namespace cssocketserver.server.core
         protected bool stop = false;
         protected java.net.Socket client;
         protected ServerSocket serverSocket;
+
+        protected ObjectOutputStream OutputStream { get => outputStream; set => outputStream = value; }
+        protected ObjectInputStream InputStream { get => inputStream; set => inputStream = value; }
 
         public Module(ServerSocket serverSocket)
         {
