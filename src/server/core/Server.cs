@@ -6,16 +6,17 @@ namespace cssocketserver.server.core
 
     using java.net.InetAddress;
     using java.net.ServerSocket;
+    using System.Threading;
 
 
     /**
      * @author andrzej.salamon@gmail.com
      */
-    public sealed class Server : Thread
+    public sealed class Server
     { //lets keep it extend
         private ServerSocket serverSocket = null;
-        const string IP = getIp();
-
+        public const string IP = getIp();
+        private Thread serverThread;
         private static serverconfig.ServerConfig config;
 
         //    private Socket client;
@@ -24,6 +25,8 @@ namespace cssocketserver.server.core
 
         public Server()
         {
+            serverThread = new Thread(new ThreadStart(this.run));
+
             try
             {
                 Server.setConfig(new serverconfig.ServerConfig("config" + FileUtils.FILE_SEPARATOR + "server.xml"));
