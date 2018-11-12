@@ -3,8 +3,12 @@ namespace cssocketserver.server.module
 
     using servercore = server.core;
     using servercoremodule = server.core.module;
+     using System.Net.Sockets;
+
+     
     /**
      * @author andrzej.salamon@gmail.com
+     * @todo make it async
      */
     public sealed class Socket : servercoremodule.SocketModule
     {
