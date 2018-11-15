@@ -5,27 +5,30 @@ namespace cssocketserver.server.core
     using serverutils = server.utils;
 
     using java.net.InetAddress;
-    using java.net.ServerSocket;
     using System.Threading;
+    using System.Net.Sockets;
 
 
     /**
      * @author andrzej.salamon@gmail.com
+     * @todo make it async
      */
     public sealed class Server
     { //lets keep it extend
-        private ServerSocket serverSocket = null;
         public const string IP = getIp();
+        private Socket serverSocket;
         private Thread serverThread;
         private static serverconfig.ServerConfig config;
 
-        //    private Socket client;
+        //  private Socket client;
         //	private SocketConnection connection;
         private List<Connection> connections = new List<Connection>();
-
+        private TcpClient client;
+        private TcpListener listener;
+        
         public Server()
         {
-            serverThread = new Thread(new ThreadStart(this.run));
+            serverThread = new Thread(new ThreadStart(this.run)); //@todo rf to parent cl thread
 
             try
             {
@@ -40,7 +43,7 @@ namespace cssocketserver.server.core
 
             addDefaultModule();
 
-            this.start();
+            serverThread.start();
         }
 
 
@@ -111,19 +114,17 @@ namespace cssocketserver.server.core
 
         public ServerSocket getServerSocket()
         {
-            return serverSocket;
+            return ServerSocket;
         }
 
         public void setServerSocket(ServerSocket serverSocket)
         {
-            this.serverSocket = serverSocket;
+            this.ServerSocket = serverSocket;
         }
 
         public static void main(string[] args)
         {
             new Server();
         }
-
-
     }
 }

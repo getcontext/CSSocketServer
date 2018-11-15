@@ -1,8 +1,5 @@
 namespace cssocketserver.server.core
 {
-
-    using java.io.IOException;
-
     /**
      * @author wizard
      */

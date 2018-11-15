@@ -1,15 +1,12 @@
 namespace cssocketserver.server.core
 {
 
-    using java.io.ObjectInputStream;
-    using java.io.ObjectOutputStream;
-    using java.net.ServerSocket;
-    using java.net.Socket;
+    using System.Net.Sockets;
 
     /**
      * @todo add factory
      */
-    public abstract class Module : Runnable, Connection
+    public abstract class Module : Connection
     {
         protected static int counter = 0;
         protected readonly Thread thread;
@@ -25,7 +22,7 @@ namespace cssocketserver.server.core
         protected bool close = false;
         protected int instanceNo; //!imp getMaxInstanceNo
         protected bool stop = false;
-        protected java.net.Socket client;
+        protected Socket client;
         protected ServerSocket serverSocket;
 
         protected ObjectOutputStream OutputStream { get => outputStream; set => outputStream = value; }
@@ -35,8 +32,8 @@ namespace cssocketserver.server.core
         {
             this.serverSocket = serverSocket;
             this.instanceNo = counter++;
-            this.thread = new Thread(this, MODULE_NAME + "_" + instanceNo);
-
+            // this.thread = new Thread(this, MODULE_NAME + "_" + instanceNo);
+            this.thread =new Thread(new ThreadStart(this.run))
         }
 
         public static int getCounter()

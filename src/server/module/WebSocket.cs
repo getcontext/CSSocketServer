@@ -6,14 +6,14 @@ namespace cssocketserver.server.module
 
     using java.io.ObjectInputStream;
     using java.io.ObjectOutputStream;
-    using java.net.ServerSocket;
-    using java.net.Socket;
+    using System.Net.Sockets;
     using java.util.Scanner;
 
     // using server.core.*;
 
     /**
      * @author andrzej.salamon@gmail.com
+     * @todo make it async
      */
     public sealed class WebSocket : servercoremodule.WebSocketModule
     {
