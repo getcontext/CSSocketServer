@@ -4,10 +4,6 @@ namespace cssocketserver.server.core
     using serverconfig = server.config;
     using serverutils = server.utils;
 
-<<<<<<< HEAD
-    using java.net.InetAddress;
-=======
->>>>>>> 22857a18fed0c6dc914117392234b74e3e4db30e
     using System.Threading;
     using System.Net.Sockets;
 
@@ -17,31 +13,16 @@ namespace cssocketserver.server.core
      * @todo make it async
      */
     public sealed class Server
-<<<<<<< HEAD
-    { //lets keep it extend
-=======
     {
         public enum ServerType {
             Socket,
             WebSocket
         }
->>>>>>> 22857a18fed0c6dc914117392234b74e3e4db30e
         public const string IP = getIp();
         private Socket serverSocket;
         private Thread serverThread;
         private static serverconfig.ServerConfig config;
 
-<<<<<<< HEAD
-        //  private Socket client;
-        //	private SocketConnection connection;
-        private List<Connection> connections = new List<Connection>();
-        private TcpClient client;
-        private TcpListener listener;
-        
-        public Server()
-        {
-            serverThread = new Thread(new ThreadStart(this.run)); //@todo rf to parent cl thread
-=======
         private Socket clientSocket;
         private SocketConnection connection;
         private IPEndPoint endPointSocket;
@@ -53,7 +34,6 @@ namespace cssocketserver.server.core
 
         public Server()
         {
->>>>>>> 22857a18fed0c6dc914117392234b74e3e4db30e
 
             try
             {
@@ -79,8 +59,6 @@ namespace cssocketserver.server.core
             addDefaultModule();
 
             serverThread.start();
-<<<<<<< HEAD
-=======
         }
 
 
@@ -111,7 +89,6 @@ namespace cssocketserver.server.core
             addDefaultModule();
 
             serverThread.start();
->>>>>>> 22857a18fed0c6dc914117392234b74e3e4db30e
         }
 
 
