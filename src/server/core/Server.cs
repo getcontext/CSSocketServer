@@ -4,7 +4,10 @@ namespace cssocketserver.server.core
     using serverconfig = server.config;
     using serverutils = server.utils;
 
+<<<<<<< HEAD
     using java.net.InetAddress;
+=======
+>>>>>>> 22857a18fed0c6dc914117392234b74e3e4db30e
     using System.Threading;
     using System.Net.Sockets;
 
@@ -14,12 +17,21 @@ namespace cssocketserver.server.core
      * @todo make it async
      */
     public sealed class Server
+<<<<<<< HEAD
     { //lets keep it extend
+=======
+    {
+        public enum ServerType {
+            Socket,
+            WebSocket
+        }
+>>>>>>> 22857a18fed0c6dc914117392234b74e3e4db30e
         public const string IP = getIp();
         private Socket serverSocket;
         private Thread serverThread;
         private static serverconfig.ServerConfig config;
 
+<<<<<<< HEAD
         //  private Socket client;
         //	private SocketConnection connection;
         private List<Connection> connections = new List<Connection>();
@@ -29,21 +41,77 @@ namespace cssocketserver.server.core
         public Server()
         {
             serverThread = new Thread(new ThreadStart(this.run)); //@todo rf to parent cl thread
+=======
+        private Socket clientSocket;
+        private SocketConnection connection;
+        private IPEndPoint endPointSocket;
+        private IPEndPoint endPointWebSocket;
+
+        private List<Connection> connections = new List<Connection>();
+        // private TcpClient client;
+        // private TcpListener listener;
+
+        public Server()
+        {
+>>>>>>> 22857a18fed0c6dc914117392234b74e3e4db30e
 
             try
             {
-                Server.setConfig(new serverconfig.ServerConfig("config" + FileUtils.FILE_SEPARATOR + "server.xml"));
-                setServerSocket(new ServerSocket(int.TryParse(config.get("port"))));
+
+                serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                endPointSocket = new IPEndPoint(IPAddress.Any, int.TryParse(config.get("port")));
+
+                Server.config = new serverconfig.ServerConfig("config" + FileUtils.FILE_SEPARATOR + "server.xml");
+
+                // clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+                // setServerSocket(new ServerSocket(int.TryParse(config.get("port"))));
+                
+                serverThread = new Thread(new ThreadStart(this.run)); //@todo rf to parent cl thread
             }
-            catch (IOException e)
+            catch (Exception e)
             {
                 Console.Out.WriteLine("failed listening on port: " + config.get("port"));
+                //add websocket port, nested config, islands
                 System.exit(1);
             }
 
             addDefaultModule();
 
             serverThread.start();
+<<<<<<< HEAD
+=======
+        }
+
+
+        public Server(ServerType type)
+        {
+
+            try
+            {
+
+                serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                endPointSocket = new IPEndPoint(IPAddress.Any, int.TryParse(config.get("port")));
+
+                Server.config = new serverconfig.ServerConfig("config" + FileUtils.FILE_SEPARATOR + "server.xml");
+
+                // clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+                // setServerSocket(new ServerSocket(int.TryParse(config.get("port"))));
+                
+                serverThread = new Thread(new ThreadStart(this.run)); //@todo rf to parent cl thread
+            }
+            catch (Exception e)
+            {
+                Console.Out.WriteLine("failed listening on port: " + config.get("port"));
+                //add websocket port, nested config, islands
+                System.exit(1);
+            }
+
+            addDefaultModule();
+
+            serverThread.start();
+>>>>>>> 22857a18fed0c6dc914117392234b74e3e4db30e
         }
 
 
