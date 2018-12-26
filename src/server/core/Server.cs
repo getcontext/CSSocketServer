@@ -1,11 +1,13 @@
 namespace cssocketserver.server.core
 {
 
-    using serverconfig = server.config;
-    using serverutils = server.utils;
+    using sc = server.config;
+    using su = server.utils;
 
     using System.Threading;
     using System.Net.Sockets;
+    using System.Net;
+    using System.Collections.Generic;
 
 
     /**
@@ -14,49 +16,47 @@ namespace cssocketserver.server.core
      */
     public sealed class Server
     {
-        public enum ServerType {
+        public enum ServerType
+        {
             Socket,
             WebSocket
         }
+
         public const string IP = getIp();
-        private Socket serverSocket;
+        public const string SOCKET_ID = "socket";
+        public const string WEBSOCKET_ID = "websocket";
         private Thread serverThread;
         private static serverconfig.ServerConfig config;
+        private static Dictionary<string, Socket> sockets = new Dictionary<string, Socket>();
 
-        private Socket clientSocket;
         private SocketConnection connection;
-        private IPEndPoint endPointSocket;
-        private IPEndPoint endPointWebSocket;
+        private static Dictionary<string, IPEndPoint> endPoints = new Dictionary<string, IPEndPoint>();
 
         private List<Connection> connections = new List<Connection>();
-        // private TcpClient client;
-        // private TcpListener listener;
 
         public Server()
         {
 
             try
             {
+                config = new sc.ServerConfig("config" + FileUtils.FILE_SEPARATOR + "server.xml");
 
-                serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                endPointSocket = new IPEndPoint(IPAddress.Any, int.TryParse(config.get("port")));
-
-                Server.config = new serverconfig.ServerConfig("config" + FileUtils.FILE_SEPARATOR + "server.xml");
+                addSocket("socket", new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+                addEndpoint("socket", new IPEndPoint(IPAddress.Any, int.TryParse(config.get("socket.port"))));
 
                 // clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
                 // setServerSocket(new ServerSocket(int.TryParse(config.get("port"))));
-                
+
                 serverThread = new Thread(new ThreadStart(this.run)); //@todo rf to parent cl thread
             }
             catch (Exception e)
             {
-                Console.Out.WriteLine("failed listening on port: " + config.get("port"));
+                // Console.Out.WriteLine("failed listening on port: " + config.get("port"));
                 //add websocket port, nested config, islands
                 System.exit(1);
             }
 
-            addDefaultModule();
+            addDefaultModules();
 
             serverThread.start();
         }
@@ -76,7 +76,7 @@ namespace cssocketserver.server.core
                 // clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
                 // setServerSocket(new ServerSocket(int.TryParse(config.get("port"))));
-                
+
                 serverThread = new Thread(new ThreadStart(this.run)); //@todo rf to parent cl thread
             }
             catch (Exception e)
@@ -86,13 +86,13 @@ namespace cssocketserver.server.core
                 System.exit(1);
             }
 
-            addDefaultModule();
+            addDefaultModules();
 
             serverThread.start();
         }
 
 
-        protected void addDefaultModule()
+        private void addDefaultModules()
         {
 
             addModule(new WebSocket(getServerSocket()));
@@ -105,17 +105,28 @@ namespace cssocketserver.server.core
                 connections.add(socketConnection);
         }
 
-        protected void startModules()
+        private void addSocket(string name, Socket item)
+        {
+            if (!sockets.contains(item))
+                sockets.add(item);
+        }
+
+        private void addEndpoint(string name, IPEndPoint item)
+        {
+            if (!endPoints.contains(item))
+                endPoints.add(item);
+        }
+
+        private void startModules()
         {
             if (connections.size() <= 0) return;
-
             foreach (Connection conn in connections)
             {
                 conn.start();
             }
         }
 
-        public static serverconfig.ServerConfig getConfig()
+        public static serverconfig.ServerConfig gebtConfig()
         {
             return config;
         }
@@ -130,12 +141,13 @@ namespace cssocketserver.server.core
             Console.Out.WriteLine("Andrew (Web)Socket(s) Server v. 1.1");
 
             startModules(); /* todo allow rts cli , -restart,-stop,-start */
+            /* allow for single instances */
 
             while (true)
             {
                 try
                 {//@todo thread pooling
-                    sleep(1);
+                    sleep(300);
                 }
                 catch (InterruptedException e)
                 {

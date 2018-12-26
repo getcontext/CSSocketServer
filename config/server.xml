@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<config>	
-	<port>6050</port>
+<config>
+	<socket>
+		<port>6050</port>
+	</socket>
+	<webSocket>
+		<port>6050</port>
+	</webSocket>
 </config>
