@@ -111,7 +111,7 @@ namespace cssocketserver.server.core
                 sockets.Add(name, item);
         }
 
-        protected Socket getSocket(string name)
+        protected Socket? getSocket(string name)
         {
             if (sockets.ContainsKey(name))
                 return sockets[name];
@@ -123,7 +123,7 @@ namespace cssocketserver.server.core
                 endPoints.Add(item);
         }
 
-        protected IPEndPoint getEndpoint(string name)
+        protected IPEndPoint? getEndpoint(string name)
         {
             if (endPoints.ContainsKey(name))
                 return endPoints[name];
