@@ -41,8 +41,8 @@ namespace cssocketserver.server.core
             {
                 config = new sc.ServerConfig("config" + FileUtils.FILE_SEPARATOR + "server.xml");
 
-                addSocket("socket", new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-                addEndpoint("socket", new IPEndPoint(IPAddress.Any, int.TryParse(config.get("socket.port"))));
+                addSocket(SOCKET_ID, new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+                addEndpoint(SOCKET_ID, new IPEndPoint(IPAddress.Any, int.TryParse(config.get("socket.port"))));
 
                 // clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 // setServerSocket(new ServerSocket(int.TryParse(config.get("port"))));
@@ -68,13 +68,13 @@ namespace cssocketserver.server.core
             try
             {
 
-                serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                endPointSocket = new IPEndPoint(IPAddress.Any, int.TryParse(config.get("port")));
+                config = new sc.ServerConfig("config" + FileUtils.FILE_SEPARATOR + "server.xml");
 
-                Server.config = new serverconfig.ServerConfig("config" + FileUtils.FILE_SEPARATOR + "server.xml");
+                addSocket(SOCKET_ID, new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+                addEndpoint(SOCKET_ID, new IPEndPoint(IPAddress.Any, int.TryParse(config.get("socket.port"))));
+
 
                 // clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
                 // setServerSocket(new ServerSocket(int.TryParse(config.get("port"))));
 
                 serverThread = new Thread(new ThreadStart(this.run)); //@todo rf to parent cl thread
@@ -126,12 +126,12 @@ namespace cssocketserver.server.core
             }
         }
 
-        public static serverconfig.ServerConfig gebtConfig()
+        public static sc.ServerConfig gebtConfig()
         {
             return config;
         }
 
-        public static void setConfig(serverconfig.ServerConfig config)
+        public static void setConfig(sc.ServerConfig config)
         {
             Server.config = config;
         }
