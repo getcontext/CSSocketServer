@@ -107,16 +107,27 @@ namespace cssocketserver.server.core
 
         private void addSocket(string name, Socket item)
         {
-            if (!sockets.contains(item))
-                sockets.add(item);
+            if (!sockets.ContainsKey(name))
+                sockets.Add(name, item);
+        }
+
+        protected Socket getSocket(string name)
+        {
+            if (sockets.ContainsKey(name))
+                return sockets[name];
         }
 
         private void addEndpoint(string name, IPEndPoint item)
         {
-            if (!endPoints.contains(item))
-                endPoints.add(item);
+            if (!endPoints.ContainsKey(name))
+                endPoints.Add(item);
         }
 
+        protected IPEndPoint getEndpoint(string name)
+        {
+            if (endPoints.ContainsKey(name))
+                return endPoints[name];
+        }
         private void startModules()
         {
             if (connections.size() <= 0) return;
