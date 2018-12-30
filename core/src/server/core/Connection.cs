@@ -10,5 +10,6 @@ namespace cssocketserver.server.core
         void receive();
         void broadcast();
         void broadcast(string data);
+        void run();
     }
 }

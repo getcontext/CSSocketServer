@@ -1,31 +1,22 @@
 namespace cssocketserver.server.module
 {
-    using serverconfig = server.config;
-    using servercoremodule = server.core.module;
-    using serverutils = server.utils;
-
-    using java.io.ObjectInputStream;
-    using java.io.ObjectOutputStream;
-    using System.Net.Sockets;
-    using java.util.Scanner;
-
-    // using server.core.*;
+    using scfg = server.config;
+    using sc = server.core;
+    using su = server.utils;
 
     /**
      * @author andrzej.salamon@gmail.com
-     * @todo make it async
+     * @todo @see Socket
      */
-    public sealed class WebSocket : servercoremodule.WebSocketModule
+    public sealed class WebSocket : sc.module.WebSocketModule
     {
         public const string MODULE_NAME = "websocket";
 
-
-        public WebSocket(ServerSocket serverSocket)
+        public WebSocket(sc.ServerSocket serverSocket) : base(serverSocket)
         {
-            super(serverSocket);
         }
 
-        public string getId()
+        public override string getId()
         {
             return MODULE_NAME;
         }
@@ -46,7 +37,8 @@ namespace cssocketserver.server.module
                 request = getRequestAsString();
 
                 if (isGet())
-                { //wat dat iz ? mv, lambda, listener
+                {
+                    //wat dat iz ? mv, lambda, listener
                     if (isHandshake())
                     {
                         try
@@ -58,7 +50,8 @@ namespace cssocketserver.server.module
                             e.printStackTrace();
                         }
                         catch (IOException e)
-                        { //ref ?
+                        {
+                            //ref ?
                             e.printStackTrace();
                         }
                     }
@@ -92,6 +85,7 @@ namespace cssocketserver.server.module
                         System.err.println("Failed processing client request");
                     }
                 }
+
                 try
                 {
                     Thread.sleep(1);
@@ -102,6 +96,5 @@ namespace cssocketserver.server.module
                 }
             }
         }
-
     }
 }

@@ -1,22 +1,26 @@
 namespace cssocketserver.server.module
 {
 
-    using servercore = server.core;
-    using servercoremodule = server.core.module;
+    using sc = server.core;
      using System.Net.Sockets;
 
      
     /**
      * @author andrzej.salamon@gmail.com
+     *
+     * for both modules
+     *
      * @todo make it async
+     * @todo delegate injection as event
+     * @todo dynamic instantiation, make it pooling
      */
-    public sealed class Socket : servercoremodule.SocketModule
+    public sealed class Socket : sc.module.SocketModule
     {
         public const string MODULE_NAME = "socket";
 
-        public Socket(ServerSocket serverSocket)
+        public Socket(sc.ServerSocket serverSocket) : base(serverSocket)
         {
-            super(serverSocket);
+          
         }
 
         public string getId()
@@ -29,7 +33,7 @@ namespace cssocketserver.server.module
 
         }
 
-        public void handleStream(java.net.Socket client)
+        public void handleStream(Socket client)
         {
             try
             {

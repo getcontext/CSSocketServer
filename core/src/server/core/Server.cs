@@ -1,8 +1,11 @@
+using System;
+
 namespace cssocketserver.server.core
 {
 
     using sc = server.config;
     using su = server.utils;
+    using sm = server.module;
 
     using System.Threading;
     using System.Net.Sockets;
@@ -22,7 +25,7 @@ namespace cssocketserver.server.core
             WebSocket
         }
 
-        public const string IP = getIp();
+//        public const string IP = "127.0.0.1" ?? getIp();
         public const string SOCKET_ID = "socket";
         public const string WEBSOCKET_ID = "websocket";
         
@@ -30,11 +33,8 @@ namespace cssocketserver.server.core
         private static sc.ServerConfig config;
         //map crap to int or not ? 
         private static Dictionary<string, Socket> sockets = new Dictionary<string, Socket>();
-
-        private SocketConnection connection;
         private static Dictionary<string, IPEndPoint> endPoints = new Dictionary<string, IPEndPoint>();
-
-        private List<Connection> connections = new List<Connection>();
+        private readonly List<Connection> connections = new List<Connection>();
 
         public Server()
         {
@@ -47,7 +47,7 @@ namespace cssocketserver.server.core
             {
                 // Console.Out.WriteLine("failed listening on port: " + config.get("port"));
                 //add websocket port, nested config, islands
-                System.exit(1);
+                Environment.Exit(1);
             }
         }
 
@@ -71,22 +71,23 @@ namespace cssocketserver.server.core
             try
             {
 
-                config = new sc.ServerConfig("config" + FileUtils.FILE_SEPARATOR + "server.xml");
+                config = new sc.ServerConfig("config" + su.FileUtils.FILE_SEPARATOR + "server.xml");
 
+                //@todo refactor to SocketInformation Factory
                 addSocket(connectionId, new ServerSocket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+                //@todo encapsulate into Factory
                 addEndpoint(connectionId, new IPEndPoint(IPAddress.Any, int.TryParse(config.get("socket.port"))));
-
 
                 // clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 // setServerSocket(new ServerSocket(int.TryParse(config.get("port"))));
 
-                serverThread = new Thread(new ThreadStart(this.run)); //@todo rf to parent cl thread
+                serverThread = new Thread(new ThreadStart(this.run)); //@todo rf to parent cl thread (not possible - sealed)
             }
             catch (Exception e)
             {
                 Console.Out.WriteLine("failed listening on port: " + config.get("port"));
                 //add websocket port, nested config, islands
-                System.exit(1);
+                Environment.Exit(1);
             }
 
             addDefaultModules();
@@ -98,14 +99,14 @@ namespace cssocketserver.server.core
         private void addDefaultModules()
         {
 
-            addModule(new WebSocket(getServerSocket()));
-            addModule(new Socket(getServerSocket()));
+            addModule(new sm.WebSocket(getServerSocket()));
+            addModule(new sm.Socket(getServerSocket()));
         }
 
         public void addModule(Connection socketConnection)
         {
-            if (!connections.contains(socketConnection))
-                connections.add(socketConnection);
+            if (!connections.Contains(socketConnection))
+                connections.Add(socketConnection);
         }
 
         private void addSocket(string name, Socket item)
@@ -114,7 +115,7 @@ namespace cssocketserver.server.core
                 sockets.Add(name, item);
         }
 
-        protected Socket? getSocket(string name)
+        protected Socket getSocket(string name)
         {
             if (sockets.ContainsKey(name))
                 return sockets[name];
@@ -126,21 +127,21 @@ namespace cssocketserver.server.core
                 endPoints.Add(name, item);
         }
 
-        protected IPEndPoint? getEndpoint(string name)
+        protected IPEndPoint getEndpoint(string name)
         {
             if (endPoints.ContainsKey(name))
                 return endPoints[name];
         }
         private void startModules()
         {
-            if (connections.size() <= 0) return;
+            if (connections.Count <= 0) return;
             foreach (Connection conn in connections)
             {
                 conn.start();
             }
         }
 
-        public static sc.ServerConfig gebtConfig()
+        public static sc.ServerConfig getConfig()
         {
             return config;
         }
@@ -170,7 +171,7 @@ namespace cssocketserver.server.core
             }
         }
 
-        private static string? getIp()
+        private static string getIp()
         {
             try
             {

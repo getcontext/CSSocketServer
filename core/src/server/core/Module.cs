@@ -1,6 +1,6 @@
 namespace cssocketserver.server.core
 {
-
+    using System.Threading;
     using System.Net.Sockets;
 
     /**
@@ -12,8 +12,8 @@ namespace cssocketserver.server.core
         protected readonly Thread thread;
 
         private ObjectOutputStream outputStream;
-
         private ObjectInputStream inputStream;
+        
         protected byte[] requestByte;
         protected byte[] responseByte;
         protected byte[] frame = new byte[10];
@@ -25,15 +25,24 @@ namespace cssocketserver.server.core
         protected Socket client;
         protected ServerSocket serverSocket;
 
-        protected ObjectOutputStream OutputStream { get => outputStream; set => outputStream = value; }
-        protected ObjectInputStream InputStream { get => inputStream; set => inputStream = value; }
+        protected ObjectOutputStream OutputStream
+        {
+            get => outputStream;
+            set => outputStream = value;
+        }
+
+        protected ObjectInputStream InputStream
+        {
+            get => inputStream;
+            set => inputStream = value;
+        }
 
         public Module(ServerSocket serverSocket)
         {
             this.serverSocket = serverSocket;
             this.instanceNo = counter++;
             // this.thread = new Thread(this, MODULE_NAME + "_" + instanceNo);
-            this.thread =new Thread(new ThreadStart(this.run))
+            this.thread = new Thread(new ThreadStart(this.run));
         }
 
         public static int getCounter()
@@ -75,6 +84,26 @@ namespace cssocketserver.server.core
         {
             getThread().stop();
             stop = true;
+        }
+
+        public void receive()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void broadcast()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void broadcast(string data)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void run()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

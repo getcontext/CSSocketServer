@@ -1,22 +1,16 @@
+using System.IO;
+using System.Net.Sockets;
+
 namespace cssocketserver.server.core.module
 {
+    using sc = server.core;
 
-    using servercore = server.core;
-
-    using javax.xml.bind.DatatypeConverter;
-    using java.io.ObjectInputStream;
-    using java.io.ObjectOutputStream;
-    using java.net.ServerSocket;
-    using java.net.Socket;
-    using java.security.MessageDigest;
-
-    public abstract class WebSocketModule : servercore.Module, servercore.WebSocketConnection
+    public abstract class WebSocketModule : sc.Module, sc.WebSocketConnection
     {
         protected string secWebSocketKey;
 
-        public WebSocketModule(ServerSocket serverSocket)
+        public WebSocketModule(ServerSocket serverSocket) : base(serverSocket)
         {
-            super(serverSocket);
         }
 
         /**
@@ -28,17 +22,17 @@ namespace cssocketserver.server.core.module
         {
             //no text in class plz, mv, to cfg
             responseByte = ("HTTP/1.1 101 Switching Protocols\r\n"
-                    + "WebSocketConnection: Upgrade\r\n"
-                    + "Upgrade: websocket\r\n"
-                    + "Sec-WebSocket-Accept: "
-                    + DatatypeConverter
-                    .printBase64Binary(
-                            MessageDigest
-                                    .getInstance("SHA-1")
-                                    .digest((secWebSocketKey + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11")
+                            + "WebSocketConnection: Upgrade\r\n"
+                            + "Upgrade: websocket\r\n"
+                            + "Sec-WebSocket-Accept: "
+                            + DatatypeConverter
+                                .printBase64Binary(
+                                    MessageDigest
+                                        .getInstance("SHA-1")
+                                        .digest((secWebSocketKey + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11")
                                             .getBytes("UTF-8")))
-                    + "\r\n\r\n")
-                    .getBytes("UTF-8");
+                            + "\r\n\r\n")
+                .getBytes("UTF-8");
             outputStream.write(responseByte, 0, responseByte.length);
         }
 
@@ -81,18 +75,19 @@ namespace cssocketserver.server.core.module
 
             //b[0] is always text in my case so no need to check;
             byte data = buffer[1]; //does it cause a problem ?
-            byte op = (byte)127;
-            length = (byte)(data & op);
+            byte op = (byte) 127;
+            length = (byte) (data & op);
 
-            mask = 2;  //lowest mask
-            if (length == (byte)126) mask = 4;//med
-            if (length == (byte)127) mask = 10; //max mask
+            mask = 2; //lowest mask
+            if (length == (byte) 126) mask = 4; //med
+            if (length == (byte) 127) mask = 10; //max mask
 
             byte[] masks = new byte[4];
 
             int j = 0, i = mask;
             for (; i < (mask + 4); i++)
-            { //start at mask, stop at last + 4
+            {
+                //start at mask, stop at last + 4
                 masks[j] = buffer[i]; //problem here
                 j++;
             }
@@ -101,7 +96,7 @@ namespace cssocketserver.server.core.module
 
             for (i = dataStart, j = 0; i < messageLength; i++, j++)
             {
-                requestByte[j] = (byte)(buffer[i] ^ masks[j % 4]);
+                requestByte[j] = (byte) (buffer[i] ^ masks[j % 4]);
             }
 
             response = new string(requestByte); //why now string copy of byte ?
@@ -112,34 +107,34 @@ namespace cssocketserver.server.core.module
             byte[] rawData = data.getBytes();
             int len = rawData.length, frameCount;
 
-            frame[0] = (byte)129;
+            frame[0] = (byte) 129;
             /* @TODO: loop it */ //or no, loop is more expensive in dat case
-                                 //is fixed, make it 2 dim static pre-comp,
-                                 //heart of app
-                                 //const logic and byte 255
+            //is fixed, make it 2 dim static pre-comp,
+            //heart of app
+            //const logic and byte 255
             if (rawData.length <= 125)
             {
-                frame[1] = (byte)len;
+                frame[1] = (byte) len;
                 frameCount = 2;
             }
             else if (rawData.length <= 65535)
             {
-                frame[1] = (byte)126;
-                frame[2] = (byte)((len >> 8) & (byte)255);
-                frame[3] = (byte)(len & (byte)255);
+                frame[1] = (byte) 126;
+                frame[2] = (byte) ((len >> 8) & (byte) 255);
+                frame[3] = (byte) (len & (byte) 255);
                 frameCount = 4;
             }
             else
             {
-                frame[1] = (byte)127;
-                frame[2] = (byte)((len >> 56) & (byte)255);
-                frame[3] = (byte)((len >> 48) & (byte)255);
-                frame[4] = (byte)((len >> 40) & (byte)255);
-                frame[5] = (byte)((len >> 32) & (byte)255);
-                frame[6] = (byte)((len >> 24) & (byte)255);
-                frame[7] = (byte)((len >> 16) & (byte)255);
-                frame[8] = (byte)((len >> 8) & (byte)255);
-                frame[9] = (byte)(len & (byte)255);
+                frame[1] = (byte) 127;
+                frame[2] = (byte) ((len >> 56) & (byte) 255);
+                frame[3] = (byte) ((len >> 48) & (byte) 255);
+                frame[4] = (byte) ((len >> 40) & (byte) 255);
+                frame[5] = (byte) ((len >> 32) & (byte) 255);
+                frame[6] = (byte) ((len >> 24) & (byte) 255);
+                frame[7] = (byte) ((len >> 16) & (byte) 255);
+                frame[8] = (byte) ((len >> 8) & (byte) 255);
+                frame[9] = (byte) (len & (byte) 255);
                 frameCount = 10;
             }
 
@@ -160,12 +155,10 @@ namespace cssocketserver.server.core.module
 
             outputStream.write(responseByte);
             outputStream.flush();
-
         }
 
         void broadcast()
         {
-
         }
 
         public void handleStream(Socket client)
@@ -184,7 +177,8 @@ namespace cssocketserver.server.core.module
             finally
             {
                 try
-                { //try to close gracefully
+                {
+                    //try to close gracefully
                     client.close();
                 }
                 catch (IOException e)
@@ -193,6 +187,8 @@ namespace cssocketserver.server.core.module
                 }
             }
         }
+
+        public abstract string getId();
 
         public void handleStream()
         {
@@ -210,7 +206,8 @@ namespace cssocketserver.server.core.module
             finally
             {
                 try
-                { //try to close gracefully
+                {
+                    //try to close gracefully
                     getClient().close();
                 }
                 catch (IOException e)
@@ -223,7 +220,8 @@ namespace cssocketserver.server.core.module
         public string getRequestAsstring()
         {
             //mv to field, cache it, reflush the stream
-            return new Scanner(inputStream, "UTF-8").useDelimiter("\\r\\n\\r\\n").next(); //bullshit is slow, is immediate release of object
+            return new Scanner(inputStream, "UTF-8").useDelimiter("\\r\\n\\r\\n")
+                .next(); //bullshit is slow, is immediate release of object
         }
 
         public string getSecWebSocketKey()
@@ -236,5 +234,4 @@ namespace cssocketserver.server.core.module
             this.secWebSocketKey = secWebSocketKey;
         }
     }
-
 }
