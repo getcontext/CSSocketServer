@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E0B26557-4156-480D-AB5E-CDB3B770B695}"
+ProjectSection(SolutionItems) = preProject
+	src\.idea\.idea.src\.idea\contentModel.xml = src\.idea\.idea.src\.idea\contentModel.xml
+	src\.idea\.idea.src\.idea\indexLayout.xml = src\.idea\.idea.src\.idea\indexLayout.xml
+	src\.idea\.idea.src\.idea\modules.xml = src\.idea\.idea.src\.idea\modules.xml
+	src\.idea\.idea.src\.idea\vcs.xml = src\.idea\.idea.src\.idea\vcs.xml
+	src\.idea\.idea.src\.idea\workspace.xml = src\.idea\.idea.src\.idea\workspace.xml
+	src\.idea\.idea.src\riderModule.iml = src\.idea\.idea.src\riderModule.iml
+	src\server\config\Config.cs = src\server\config\Config.cs
+	src\server\config\ServerConfig.cs = src\server\config\ServerConfig.cs
+	src\server\core\Client.cs = src\server\core\Client.cs
+	src\server\core\Connection.cs = src\server\core\Connection.cs
+	src\server\core\Module.cs = src\server\core\Module.cs
+	src\server\core\Server.cs = src\server\core\Server.cs
+	src\server\core\ServerSocket.cs = src\server\core\ServerSocket.cs
+	src\server\core\SocketConnection.cs = src\server\core\SocketConnection.cs
+	src\server\core\WebSocketConnection.cs = src\server\core\WebSocketConnection.cs
+	src\server\core\module\SocketModule.cs = src\server\core\module\SocketModule.cs
+	src\server\core\module\WebSocketModule.cs = src\server\core\module\WebSocketModule.cs
+	src\server\module\Socket.cs = src\server\module\Socket.cs
+	src\server\module\WebSocket.cs = src\server\module\WebSocket.cs
+	src\server\utils\DateUtils.cs = src\server\utils\DateUtils.cs
+	src\server\utils\FileUtils.cs = src\server\utils\FileUtils.cs
+EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{FEBC1EEA-3C55-43C1-93A6-E19CDF601010}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FEBC1EEA-3C55-43C1-93A6-E19CDF601010}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEBC1EEA-3C55-43C1-93A6-E19CDF601010}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEBC1EEA-3C55-43C1-93A6-E19CDF601010}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEBC1EEA-3C55-43C1-93A6-E19CDF601010}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
