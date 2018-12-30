@@ -28,7 +28,7 @@ namespace cssocketserver.server.config
 
         public static void add(string key, Config config)
         {
-            get().put(key, config);
+            get().Add(key, config);
         }
     }
 }
