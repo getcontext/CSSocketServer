@@ -1,10 +1,10 @@
 ﻿{
   "version": "1.0.0",
   "restore": {
-    "projectUniqueName": "/home/wizard/workspace/csharp/CSSocketServer/Core/Core.csproj",
+    "projectUniqueName": "/home/wizard/workspace/csharp/CSSocketServer/core/core.csproj",
     "projectName": "core",
-    "projectPath": "/home/wizard/workspace/csharp/CSSocketServer/Core/Core.csproj",
-    "outputPath": "/home/wizard/workspace/csharp/CSSocketServer/Core/obj/",
+    "projectPath": "/home/wizard/workspace/csharp/CSSocketServer/core/core.csproj",
+    "outputPath": "/home/wizard/workspace/csharp/CSSocketServer/core/obj/",
     "projectStyle": "PackageReference",
     "fallbackFolders": [
       "/usr/share/dotnet/sdk/NuGetFallbackFolder"
