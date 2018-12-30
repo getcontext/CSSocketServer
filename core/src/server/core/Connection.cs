@@ -3,7 +3,7 @@ namespace cssocketserver.server.core
     /**
      * @author wizard
      */
-    interface Connection
+    public interface Connection
     {
         void start();
         void stop();

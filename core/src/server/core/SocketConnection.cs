@@ -1,7 +1,7 @@
 namespace cssocketserver.server.core
 {
 
-    using java.net.Socket;
+    using System.Net.Sockets;
 
     /**
      * @todo pull up
