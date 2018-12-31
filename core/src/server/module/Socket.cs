@@ -1,10 +1,14 @@
+using System;
+using System.IO;
+using System.Net.Sockets; 
+
+using sc = cssocketserver.server.core;
+using scfg = cssocketserver.server.config;
+using su = cssocketserver.server.utils;
+using sm = cssocketserver.server.module;
+
 namespace cssocketserver.server.module
-{
-
-    using sc = server.core;
-     using System.Net.Sockets;
-
-     
+{     
     /**
      * @author andrzej.salamon@gmail.com
      *
@@ -43,7 +47,7 @@ namespace cssocketserver.server.module
             }
             catch (IOException e)
             {
-                e.printStackTrace();
+//                e.StackTrace;
             }
             finally
             {
@@ -53,7 +57,7 @@ namespace cssocketserver.server.module
                 }
                 catch (IOException e)
                 {
-                    e.printStackTrace();
+//                    e.StackTrace;
                 }
             }
         }
@@ -92,21 +96,21 @@ namespace cssocketserver.server.module
         {
 
         }
-
-        public void receive()
-        {
-            //            request = (SerializedSocketObject)in.readObject();
-        }
-
-        public void broadcast()
-        {
-
-        }
-
-        public void broadcast(string data)
-        {
-            //            response = process(request);
-            //            out.writeObject(response);
-        }
+//
+//        public override void receive()
+//        {
+//            //            request = (SerializedSocketObject)in.readObject();
+//        }
+//
+//        public void broadcast()
+//        {
+//
+//        }
+//
+//        public override void broadcast(string data)
+//        {
+//            //            response = process(request);
+//            //            out.writeObject(response);
+//        }
     }
 }

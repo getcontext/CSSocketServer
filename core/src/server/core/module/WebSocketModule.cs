@@ -1,12 +1,19 @@
+//using System;
 using System.IO;
-using System.Net.Sockets;
+//using System.Net.Sockets; 
+
+using sc = cssocketserver.server.core;
+using scfg = cssocketserver.server.config;
+using su = cssocketserver.server.utils;
+using sm = cssocketserver.server.module;
 
 namespace cssocketserver.server.core.module
 {
-    using sc = server.core;
 
     public abstract class WebSocketModule : sc.Module, sc.WebSocketConnection
     {
+        public const int MAX_BUFFER = 5000;
+        
         protected string secWebSocketKey;
 
         public WebSocketModule(ServerSocket serverSocket) : base(serverSocket)
@@ -18,23 +25,6 @@ namespace cssocketserver.server.core.module
          * @
          * @todo refactor it to separate Handshake class
          */
-        public void sendHandshake()
-        {
-            //no text in class plz, mv, to cfg
-            responseByte = ("HTTP/1.1 101 Switching Protocols\r\n"
-                            + "WebSocketConnection: Upgrade\r\n"
-                            + "Upgrade: websocket\r\n"
-                            + "Sec-WebSocket-Accept: "
-                            + DatatypeConverter
-                                .printBase64Binary(
-                                    MessageDigest
-                                        .getInstance("SHA-1")
-                                        .digest((secWebSocketKey + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11")
-                                            .getBytes("UTF-8")))
-                            + "\r\n\r\n")
-                .getBytes("UTF-8");
-            outputStream.write(responseByte, 0, responseByte.length);
-        }
 
         public bool isHandshake()
         {
@@ -48,18 +38,51 @@ namespace cssocketserver.server.core.module
             return false;
         }
 
-        public bool isGet()
-        {
-            Matcher get = Pattern.compile("^GET").matcher(request);
-            return get.find();
-        }
-
         public bool isGet(string data)
         {
             return false;
         }
 
-        public void receive()
+        public abstract string getId();
+
+        public void handleStream()
+        {
+            try
+            {
+                setClient(serverSocket.accept());
+                //reflush the stream
+                outputStream = new ObjectOutputStream(getClient().getOutputStream());
+                inputStream = new ObjectInputStream(getClient().getInputStream());
+            }
+            catch (IOException e)
+            {
+//                e.StackTrace;
+            }
+            finally
+            {
+                try
+                {
+                    //try to close gracefully
+                    getClient().close();
+                }
+                catch (IOException e)
+                {
+//                    e.StackTrace;
+                }
+            }
+        }
+
+        public string getSecWebSocketKey()
+        {
+            return secWebSocketKey;
+        }
+
+        public void setSecWebSocketKey(string secWebSocketKey)
+        {
+            this.secWebSocketKey = secWebSocketKey;
+        }
+
+        public virtual void receive()
         {
             byte[] buffer = new byte[WebSocketConnection.MAX_BUFFER];
             byte length;
@@ -102,7 +125,7 @@ namespace cssocketserver.server.core.module
             response = new string(requestByte); //why now string copy of byte ?
         }
 
-        public void broadcast(string data)
+        public virtual void broadcast(string data)
         {
             byte[] rawData = data.getBytes();
             int len = rawData.length, frameCount;
@@ -157,64 +180,9 @@ namespace cssocketserver.server.core.module
             outputStream.flush();
         }
 
-        void broadcast()
+        public void broadcast()
         {
-        }
-
-        public void handleStream(Socket client)
-        {
-            try
-            {
-                setClient(client);
-                //und dat naked fields ?
-                outputStream = new ObjectOutputStream(getClient().getOutputStream());
-                inputStream = new ObjectInputStream(getClient().getInputStream());
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            finally
-            {
-                try
-                {
-                    //try to close gracefully
-                    client.close();
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        public abstract string getId();
-
-        public void handleStream()
-        {
-            try
-            {
-                setClient(serverSocket.accept());
-                //reflush the stream
-                outputStream = new ObjectOutputStream(getClient().getOutputStream());
-                inputStream = new ObjectInputStream(getClient().getInputStream());
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            finally
-            {
-                try
-                {
-                    //try to close gracefully
-                    getClient().close();
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-            }
+            broadcast("not implemented");
         }
 
         public string getRequestAsstring()
@@ -224,14 +192,28 @@ namespace cssocketserver.server.core.module
                 .next(); //bullshit is slow, is immediate release of object
         }
 
-        public string getSecWebSocketKey()
+        public void sendHandshake()
         {
-            return secWebSocketKey;
+            //no text in class plz, mv, to cfg
+            responseByte = ("HTTP/1.1 101 Switching Protocols\r\n"
+                            + "WebSocketConnection: Upgrade\r\n"
+                            + "Upgrade: websocket\r\n"
+                            + "Sec-WebSocket-Accept: "
+                            + DatatypeConverter
+                                .printBase64Binary(
+                                    MessageDigest
+                                        .getInstance("SHA-1")
+                                        .digest((secWebSocketKey + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11")
+                                            .getBytes("UTF-8")))
+                            + "\r\n\r\n")
+                .getBytes("UTF-8");
+            outputStream.write(responseByte, 0, responseByte.length);
         }
 
-        public void setSecWebSocketKey(string secWebSocketKey)
+        public bool isGet()
         {
-            this.secWebSocketKey = secWebSocketKey;
+            Matcher get = Pattern.compile("^GET").matcher(request);
+            return get.find();
         }
     }
 }

@@ -1,8 +1,9 @@
+using System.IO;
+using System.Threading;
+using System.Net.Sockets;
+
 namespace cssocketserver.server.core
 {
-    using System.Threading;
-    using System.Net.Sockets;
-
     /**
      * @todo add factory
      */
@@ -11,9 +12,9 @@ namespace cssocketserver.server.core
         protected static int counter = 0;
         protected readonly Thread thread;
 
-        private ObjectOutputStream outputStream;
-        private ObjectInputStream inputStream;
-        
+        protected ObjectOutputStream outputStream;
+        protected ObjectInputStream inputStream;
+
         protected byte[] requestByte;
         protected byte[] responseByte;
         protected byte[] frame = new byte[10];
@@ -23,19 +24,20 @@ namespace cssocketserver.server.core
         protected int instanceNo; //!imp getMaxInstanceNo
         protected bool stop = false;
         protected Socket client;
+
         protected ServerSocket serverSocket;
-
-        protected ObjectOutputStream OutputStream
-        {
-            get => outputStream;
-            set => outputStream = value;
-        }
-
-        protected ObjectInputStream InputStream
-        {
-            get => inputStream;
-            set => inputStream = value;
-        }
+//
+//        protected ObjectOutputStream OutputStream
+//        {
+//            get => outputStream;
+//            set => outputStream = value;
+//        }
+//
+//        protected ObjectInputStream InputStream
+//        {
+//            get => inputStream;
+//            set => inputStream = value;
+//        }
 
         public Module(ServerSocket serverSocket)
         {
@@ -70,7 +72,7 @@ namespace cssocketserver.server.core
             return client;
         }
 
-        protected void setClient(java.net.Socket client)
+        protected void setClient(Socket client)
         {
             this.client = client;
         }
@@ -86,24 +88,33 @@ namespace cssocketserver.server.core
             stop = true;
         }
 
-        public void receive()
+        public void handleStream(Socket client)
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                setClient(client);
+                //und dat naked fields ?
+                outputStream = new ObjectOutputStream(getClient().getOutputStream());
+                inputStream = new ObjectInputStream(getClient().getInputStream());
+            }
+            catch (IOException e)
+            {
+//                e.StackTrace;
+            }
+            finally
+            {
+                try
+                {
+                    //try to close gracefully
+                    client.close();
+                }
+                catch (IOException e)
+                {
+//                    e.StackTrace;
+                }
+            }
         }
 
-        public void broadcast()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void broadcast(string data)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void run()
-        {
-            throw new System.NotImplementedException();
-        }
+        public abstract void run();
     }
 }

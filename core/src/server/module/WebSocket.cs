@@ -1,9 +1,16 @@
+using System;
+using System.IO;
+using System.Threading;
+//using System.Net.Sockets;
+//using System.Net;
+//using System.Collections.Generic;
+using sc = cssocketserver.server.core;
+using scfg = cssocketserver.server.config;
+using su = cssocketserver.server.utils;
+using sm = cssocketserver.server.module;
+
 namespace cssocketserver.server.module
 {
-    using scfg = server.config;
-    using sc = server.core;
-    using su = server.utils;
-
     /**
      * @author andrzej.salamon@gmail.com
      * @todo @see Socket
@@ -31,28 +38,28 @@ namespace cssocketserver.server.module
                 }
                 catch (IOException e)
                 {
-                    e.printStackTrace();
+//                    e.StackTrace;
                 }
 
                 request = getRequestAsString();
 
                 if (isGet())
                 {
-                    //wat dat iz ? mv, lambda, listener
+                    //mv, lambda, listener
                     if (isHandshake())
                     {
                         try
                         {
                             sendHandshake();
                         }
-                        catch (NoSuchAlgorithmException e)
-                        {
-                            e.printStackTrace();
-                        }
+//                        catch (NoSuchAlgorithmException e)
+//                        {
+//                            e.StackTrace;
+//                        }
                         catch (IOException e)
                         {
                             //ref ?
-                            e.printStackTrace();
+//                            e.StackTrace;
                         }
                     }
                     else
@@ -64,7 +71,7 @@ namespace cssocketserver.server.module
                         }
                         catch (IOException e)
                         {
-                            e.printStackTrace();
+//                            e.StackTrace;
                         }
                     }
                 }
@@ -81,19 +88,11 @@ namespace cssocketserver.server.module
                     }
                     catch (IOException e)
                     {
-                        System.err.println("unable to close");
-                        System.err.println("Failed processing client request");
+                        Console.Error.WriteLine("unable to close\nFailed processing client request\n Exit code {0}", 1);
                     }
                 }
 
-                try
-                {
-                    Thread.sleep(1);
-                }
-                catch (InterruptedException e)
-                {
-                    e.printStackTrace();
-                }
+                Thread.Sleep(10);
             }
         }
     }
