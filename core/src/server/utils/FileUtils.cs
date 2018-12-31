@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace cssocketserver.server.utils
 {
 
@@ -8,11 +10,11 @@ namespace cssocketserver.server.utils
 
     public class FileUtils
     {
-        const string FILE_SEPARATOR = getFileseparator();
+        const char FILE_SEPARATOR = getFileseparator();
 
-        public static string getFileseparator()
+        public static char getFileseparator()
         {
-            return System.getProperty("file.separator");
+            return Path.DirectorySeparatorChar;
         }
     }
 }

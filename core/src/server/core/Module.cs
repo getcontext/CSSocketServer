@@ -115,6 +115,10 @@ namespace cssocketserver.server.core
             }
         }
 
+
         public abstract void run();
+        public abstract void receive();
+        public abstract void broadcast();
+        public abstract void broadcast(string data);
     }
 }

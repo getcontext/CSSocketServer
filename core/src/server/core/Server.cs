@@ -3,6 +3,7 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Net;
 using System.Collections.Generic;
+using System.IO;
 using sc = cssocketserver.server.config;
 using su = cssocketserver.server.utils;
 using sm = cssocketserver.server.module;
@@ -152,28 +153,25 @@ namespace cssocketserver.server.core
 
             while (true)
             {
-                try
-                {
-                    //@todo thread pooling
-                    sleep(300);
-                }
-                catch (InterruptedException e)
-                {
-                    Console.Out.WriteLine("sleep failed");
-                }
+                //@todo thread pooling
+                Thread.Sleep(300);
             }
         }
 
-        private static string getIp()
+        /**
+         * https://stackoverflow.com/questions/6803073/get-local-ip-address
+         */
+        public static string getIP()
         {
-            try
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
             {
-                InetAddress addr = InetAddress.getLocalHost();
-                return addr.getAddress().tostring();
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
             }
-            catch (UnknownHostException e)
-            {
-            }
+            throw new IOException("No network adapters with an IPv4 address in the system!");
         }
 
         public ServerSocket getServerSocket()

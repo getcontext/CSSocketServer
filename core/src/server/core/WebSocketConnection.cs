@@ -10,6 +10,6 @@ namespace cssocketserver.server.core
         bool isHandshake(string data);
         bool isGet();
         bool isGet(string data);
-        string getRequestAsstring();
+        string getRequestAsString();
     }
 }

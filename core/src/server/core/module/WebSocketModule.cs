@@ -1,5 +1,6 @@
 //using System;
 using System.IO;
+using System.Text;
 //using System.Net.Sockets; 
 
 using sc = cssocketserver.server.core;
@@ -84,7 +85,7 @@ namespace cssocketserver.server.core.module
 
         public virtual void receive()
         {
-            byte[] buffer = new byte[WebSocketConnection.MAX_BUFFER];
+            byte[] buffer = new byte[MAX_BUFFER];
             byte length;
             int messageLength, mask, dataStart;
 
@@ -125,43 +126,44 @@ namespace cssocketserver.server.core.module
             response = new string(requestByte); //why now string copy of byte ?
         }
 
-        public virtual void broadcast(string data)
+        public override void broadcast(string data)
         {
-            byte[] rawData = data.getBytes();
-            int len = rawData.length, frameCount;
+            byte[] rawData = Encoding.ASCII.GetBytes(data);
+            int rawDataLength = rawData.Length, frameCount;
 
             frame[0] = (byte) 129;
             /* @TODO: loop it */ //or no, loop is more expensive in dat case
             //is fixed, make it 2 dim static pre-comp,
             //heart of app
             //const logic and byte 255
-            if (rawData.length <= 125)
+            //address first frame bytes 
+            if (rawDataLength <= 125)
             {
-                frame[1] = (byte) len;
+                frame[1] = (byte) rawDataLength;
                 frameCount = 2;
             }
-            else if (rawData.length <= 65535)
+            else if (rawDataLength <= 65535)
             {
                 frame[1] = (byte) 126;
-                frame[2] = (byte) ((len >> 8) & (byte) 255);
-                frame[3] = (byte) (len & (byte) 255);
+                frame[2] = (byte) ((rawDataLength >> 8) & (byte) 255);
+                frame[3] = (byte) (rawDataLength & (byte) 255);
                 frameCount = 4;
             }
             else
             {
                 frame[1] = (byte) 127;
-                frame[2] = (byte) ((len >> 56) & (byte) 255);
-                frame[3] = (byte) ((len >> 48) & (byte) 255);
-                frame[4] = (byte) ((len >> 40) & (byte) 255);
-                frame[5] = (byte) ((len >> 32) & (byte) 255);
-                frame[6] = (byte) ((len >> 24) & (byte) 255);
-                frame[7] = (byte) ((len >> 16) & (byte) 255);
-                frame[8] = (byte) ((len >> 8) & (byte) 255);
-                frame[9] = (byte) (len & (byte) 255);
+                frame[2] = (byte) ((rawDataLength >> 56) & (byte) 255);
+                frame[3] = (byte) ((rawDataLength >> 48) & (byte) 255);
+                frame[4] = (byte) ((rawDataLength >> 40) & (byte) 255);
+                frame[5] = (byte) ((rawDataLength >> 32) & (byte) 255);
+                frame[6] = (byte) ((rawDataLength >> 24) & (byte) 255);
+                frame[7] = (byte) ((rawDataLength >> 16) & (byte) 255);
+                frame[8] = (byte) ((rawDataLength >> 8) & (byte) 255);
+                frame[9] = (byte) (rawDataLength & (byte) 255);
                 frameCount = 10;
             }
 
-            int responseLength = frameCount + rawData.length;
+            int responseLength = frameCount + rawDataLength;
             int responseLimit = 0;
 
             responseByte = new byte[responseLength];
@@ -180,12 +182,12 @@ namespace cssocketserver.server.core.module
             outputStream.flush();
         }
 
-        public void broadcast()
+        public override void broadcast()
         {
             broadcast("not implemented");
         }
 
-        public string getRequestAsstring()
+        public string getRequestAsString()
         {
             //mv to field, cache it, reflush the stream
             return new Scanner(inputStream, "UTF-8").useDelimiter("\\r\\n\\r\\n")

@@ -1,14 +1,14 @@
+using System.Collections.Generic;
+
 namespace cssocketserver.server.config
 {
-    using System.Collections.Generic;
-
     public class Config
     {
         private static Dictionary<string, Config> config = new Dictionary<string, Config>();
 
         protected Config()
         {
-            Config.add("default", new Config());
+            add("default", new Config());
         }
 
         public static Config create()
