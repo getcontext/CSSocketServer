@@ -6,7 +6,7 @@ namespace cssocketserver.server.utils
     {
         private const string DATE_FORMAT = "yyyyMMddHHmmss";
 
-        public static string format()
+        public static string getDate()
         {
             return DateTime.Now.ToString(DATE_FORMAT);
         }

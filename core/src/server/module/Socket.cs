@@ -25,19 +25,19 @@ namespace cssocketserver.server.module
           
         }
 
-        public void run()
+        public override void run()
         {
             try
             {
                 receive();
                 broadcast();
-                OutputStream.flush();
+                networkStream.Flush();
                 
                 try
                 {
                     //                out.close();
                     //                in.close();
-                    client.close();
+                    client.Close();
                 }
                 catch (IOException e)
                 {

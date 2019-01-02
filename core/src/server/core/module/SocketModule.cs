@@ -1,9 +1,12 @@
 using System.IO;
+using System.Net.Sockets;
+
 //using System.Net.Sockets;
+
+using sc = cssocketserver.server.core;
 
 namespace cssocketserver.server.core.module
 {
-    using sc = server.core;
 
     public abstract class SocketModule : sc.Module, sc.SocketConnection
     {
@@ -18,13 +21,12 @@ namespace cssocketserver.server.core.module
 
         }
 
-        public void handleStream(server.module.Socket client)
+        public void handleStream(sc.ServerSocket client)
         {
             try
             {
                 setClient(client);
-                OutputStream = new ObjectOutputStream(getClient().getOutputStream());
-                InputStream = new ObjectInputStream(getClient().getInputStream());
+                networkStream = new NetworkStream(getClient());
             }
             catch (IOException e)
             {
@@ -34,7 +36,7 @@ namespace cssocketserver.server.core.module
             {
                 try
                 { //try to close gracefully
-                    client.close();
+//                    client.close();
                 }
                 catch (IOException e)
                 {

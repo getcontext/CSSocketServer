@@ -1,15 +1,13 @@
+using sc = cssocketserver.server.config;
+using su = cssocketserver.server.utils;
+
+//using System.Threading;
+using System.Net.Sockets;
+//using System.Net;
+//using System.Collections.Generic;
+
 namespace cssocketserver.server.core
 {
-
-    using sc = server.config;
-    using su = server.utils;
-
-    using System.Threading;
-    using System.Net.Sockets;
-    using System.Net;
-    using System.Collections.Generic;
-
-
     /**
      * @author andrzej.salamon@gmail.com
      */

@@ -12,8 +12,7 @@ namespace cssocketserver.server.core
         protected static int counter = 0;
         protected readonly Thread thread;
 
-        protected ObjectOutputStream outputStream;
-        protected ObjectInputStream inputStream;
+        protected NetworkStream networkStream;
 
         protected byte[] requestByte;
         protected byte[] responseByte;
@@ -22,7 +21,7 @@ namespace cssocketserver.server.core
         protected string request;
         protected bool close = false;
         protected int instanceNo; //!imp getMaxInstanceNo
-        protected bool stop = false;
+        protected bool stopped = false;
         protected Socket client;
 
         protected ServerSocket serverSocket;
@@ -79,13 +78,13 @@ namespace cssocketserver.server.core
 
         public void start()
         {
-            getThread().start();
+            getThread().Start();
         }
 
         public void stop()
         {
-            getThread().stop();
-            stop = true;
+//            getThread().stop();
+            stopped = true;
         }
 
         public void handleStream(Socket client)
@@ -93,9 +92,7 @@ namespace cssocketserver.server.core
             try
             {
                 setClient(client);
-                //und dat naked fields ?
-                outputStream = new ObjectOutputStream(getClient().getOutputStream());
-                inputStream = new ObjectInputStream(getClient().getInputStream());
+                networkStream = new NetworkStream(getClient());
             }
             catch (IOException e)
             {
@@ -106,7 +103,7 @@ namespace cssocketserver.server.core
                 try
                 {
                     //try to close gracefully
-                    client.close();
+//                    client.close();
                 }
                 catch (IOException e)
                 {

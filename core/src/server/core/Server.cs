@@ -26,11 +26,11 @@ namespace cssocketserver.server.core
         public const string SOCKET_ID = "socket";
         public const string WEBSOCKET_ID = "websocket";
 
-        private Thread serverThread;
+        private readonly Thread serverThread;
 
         private static sc.ServerConfig config;
 
-        //map crap to int or not ? 
+        //map to int or not ? 
         private static Dictionary<string, Socket> sockets = new Dictionary<string, Socket>();
         private static Dictionary<string, IPEndPoint> endPoints = new Dictionary<string, IPEndPoint>();
         private readonly List<Connection> connections = new List<Connection>();
@@ -47,28 +47,17 @@ namespace cssocketserver.server.core
         {
             string connectionId;
 
-            switch (type)
-            {
-                case ServerType.Socket:
-                    connectionId = SOCKET_ID;
-                    break;
-                case ServerType.WebSocket:
-                    connectionId = WEBSOCKET_ID;
-                    break;
-                default:
-                    connectionId = SOCKET_ID;
-                    break;
-            }
+            connectionId = getConnectionId(type);
 
             try
             {
-                config = new sc.ServerConfig("config" + su.FileUtils.FILE_SEPARATOR + "server.xml");
+                config = new sc.ServerConfig("config" + su.FileUtils.getFileSeparator() + "server.xml");
 
                 //@todo refactor to SocketInformation Factory
                 addSocket(connectionId,
                     new ServerSocket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
                 //@todo encapsulate into Factory
-                addEndpoint(connectionId, new IPEndPoint(IPAddress.Any, int.TryParse(config.get("socket.port"))));
+                addEndpoint(connectionId, new IPEndPoint(IPAddress.Any, int.Parse(config.get("socket.port"))));
 
                 // clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 // setServerSocket(new ServerSocket(int.TryParse(config.get("port"))));
@@ -86,6 +75,25 @@ namespace cssocketserver.server.core
             addDefaultModules();
 
             serverThread.Start();
+        }
+
+        public static string getConnectionId(ServerType type)
+        {
+            string connectionId;
+            switch (type)
+            {
+                case ServerType.Socket:
+                    connectionId = SOCKET_ID;
+                    break;
+                case ServerType.WebSocket:
+                    connectionId = WEBSOCKET_ID;
+                    break;
+                default:
+                    connectionId = SOCKET_ID;
+                    break;
+            }
+
+            return connectionId;
         }
 
 
@@ -107,10 +115,11 @@ namespace cssocketserver.server.core
                 sockets.Add(name, item);
         }
 
-        protected Socket getSocket(string name)
+        private Socket getSocket(string name)
         {
             if (sockets.ContainsKey(name))
                 return sockets[name];
+            return null; //@todo can not be further
         }
 
         private void addEndpoint(string name, IPEndPoint item)
@@ -121,8 +130,7 @@ namespace cssocketserver.server.core
 
         protected IPEndPoint getEndpoint(string name)
         {
-            if (endPoints.ContainsKey(name))
-                return endPoints[name];
+            return endPoints.ContainsKey(name) ? endPoints[name] : null;
         }
 
         private void startModules()
@@ -149,7 +157,7 @@ namespace cssocketserver.server.core
             Console.Out.WriteLine("Andrew (Web)Socket(s) Server v. 1.1");
 
             startModules(); /* todo allow rts cli , -restart,-stop,-start */
-            /* allow for single instances */
+            /*@todo allow for single instances */
 
             while (true)
             {
@@ -171,20 +179,23 @@ namespace cssocketserver.server.core
                     return ip.ToString();
                 }
             }
+
             throw new IOException("No network adapters with an IPv4 address in the system!");
         }
 
         public ServerSocket getServerSocket()
         {
-            return serverSocket;
+            //incorrect, change dict type
+            //use ServerType
+            return (ServerSocket) getSocket(getConnectionId(ServerType.Socket)); 
         }
 
         public void setServerSocket(ServerSocket serverSocket)
         {
-            this.serverSocket = serverSocket;
+            addSocket(getConnectionId(ServerType.Socket), serverSocket);
         }
 
-        public static void main(string[] args)
+        public static void Main(string[] args)
         {
             new Server();
         }

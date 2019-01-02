@@ -10,11 +10,11 @@ namespace cssocketserver.server.utils
 
     public class FileUtils
     {
-        const char FILE_SEPARATOR = getFileseparator();
+//        public const char DIR_DELIM = Path.DirectorySeparatorChar;
 
-        public static char getFileseparator()
+        public static string getFileSeparator()
         {
-            return Path.DirectorySeparatorChar;
+            return $"{Path.DirectorySeparatorChar}";
         }
     }
 }

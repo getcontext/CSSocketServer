@@ -1,8 +1,10 @@
 //using System;
-using System.IO;
-using System.Text;
-//using System.Net.Sockets; 
 
+using System.IO;
+using System.Net.Sockets;
+using System.Text;
+using System.Text.RegularExpressions;
+//using System.Net.Sockets; 
 using sc = cssocketserver.server.core;
 using scfg = cssocketserver.server.config;
 using su = cssocketserver.server.utils;
@@ -10,11 +12,10 @@ using sm = cssocketserver.server.module;
 
 namespace cssocketserver.server.core.module
 {
-
     public abstract class WebSocketModule : sc.Module, sc.WebSocketConnection
     {
         public const int MAX_BUFFER = 5000;
-        
+
         protected string secWebSocketKey;
 
         public WebSocketModule(ServerSocket serverSocket) : base(serverSocket)
@@ -29,9 +30,10 @@ namespace cssocketserver.server.core.module
 
         public bool isHandshake()
         {
-            Matcher match = Pattern.compile("Sec-WebSocket-Key: (.*)").matcher(request);
-            secWebSocketKey = match.group(1);
-            return match.find();
+            Match match = Regex.Match(request, "Sec-WebSocket-Key: (.*)");
+            if (match.Success)
+                secWebSocketKey = match.Value;
+            return match.Success;
         }
 
         public bool isHandshake(string data)
@@ -50,10 +52,9 @@ namespace cssocketserver.server.core.module
         {
             try
             {
-                setClient(serverSocket.accept());
+                setClient(serverSocket.Accept());
                 //reflush the stream
-                outputStream = new ObjectOutputStream(getClient().getOutputStream());
-                inputStream = new ObjectInputStream(getClient().getInputStream());
+                networkStream = new NetworkStream(getClient());
             }
             catch (IOException e)
             {
@@ -64,7 +65,7 @@ namespace cssocketserver.server.core.module
                 try
                 {
                     //try to close gracefully
-                    getClient().close();
+//                    getClient().close();
                 }
                 catch (IOException e)
                 {
@@ -83,13 +84,13 @@ namespace cssocketserver.server.core.module
             this.secWebSocketKey = secWebSocketKey;
         }
 
-        public virtual void receive()
+        public override void receive()
         {
             byte[] buffer = new byte[MAX_BUFFER];
             byte length;
             int messageLength, mask, dataStart;
 
-            messageLength = inputStream.read(buffer);
+            messageLength = networkStream.Read(buffer);
             if (messageLength == -1)
             {
                 return;
@@ -123,12 +124,12 @@ namespace cssocketserver.server.core.module
                 requestByte[j] = (byte) (buffer[i] ^ masks[j % 4]);
             }
 
-            response = new string(requestByte); //why now string copy of byte ?
+            response = byteToString(requestByte); //why now string copy of byte ?
         }
 
         public override void broadcast(string data)
         {
-            byte[] rawData = Encoding.ASCII.GetBytes(data);
+            byte[] rawData = Encoding.Unicode.GetBytes(data);
             int rawDataLength = rawData.Length, frameCount;
 
             frame[0] = (byte) 129;
@@ -178,8 +179,8 @@ namespace cssocketserver.server.core.module
                 responseByte[responseLimit++] = dataByte;
             }
 
-            outputStream.write(responseByte);
-            outputStream.flush();
+            networkStream.Write(responseByte);
+            networkStream.Flush();
         }
 
         public override void broadcast()
@@ -189,8 +190,9 @@ namespace cssocketserver.server.core.module
 
         public string getRequestAsString()
         {
+            //@todo tricky part, no explict way to scan stream
             //mv to field, cache it, reflush the stream
-            return new Scanner(inputStream, "UTF-8").useDelimiter("\\r\\n\\r\\n")
+            return new Scanner(networkStream, "UTF-8").useDelimiter("\\r\\n\\r\\n")
                 .next(); //bullshit is slow, is immediate release of object
         }
 
@@ -209,13 +211,18 @@ namespace cssocketserver.server.core.module
                                             .getBytes("UTF-8")))
                             + "\r\n\r\n")
                 .getBytes("UTF-8");
-            outputStream.write(responseByte, 0, responseByte.length);
+            networkStream.Write(responseByte, 0, responseByte.Length);
         }
 
         public bool isGet()
         {
-            Matcher get = Pattern.compile("^GET").matcher(request);
-            return get.find();
+            Match match = Regex.Match(request, "^GET");
+            return match.Success;
+        }
+
+        public string byteToString(byte[] data)
+        {
+            return System.Text.Encoding.UTF8.GetString(data);
         }
     }
 }
