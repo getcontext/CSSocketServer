@@ -28,13 +28,13 @@ namespace cssocketserver.server.module
             return MODULE_NAME;
         }
 
-        public void run()
+        public override void run()
         {
-            while (!stop)
+            while (!stopped)
             {
                 try
                 {
-                    handleStream(serverSocket.accept());
+                    handleStream(serverSocket.Accept());
                 }
                 catch (IOException e)
                 {
@@ -81,10 +81,9 @@ namespace cssocketserver.server.module
                     try
                     {
                         broadcast(response); //@todo return resp headers is closed
-                        outputStream.flush();
-                        outputStream.close();
-                        inputStream.close();
-                        getClient().close();
+                        networkStream.Flush();
+                        networkStream.Close();
+                        getClient().Close();
                     }
                     catch (IOException e)
                     {

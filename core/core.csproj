@@ -3,7 +3,7 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>netcoreapp2.1</TargetFramework>
-        <AssemblyName>core</AssemblyName>
+        <AssemblyName>Core</AssemblyName>
         <RootNamespace>cssocketserver.server</RootNamespace>
     </PropertyGroup>
 

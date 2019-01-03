@@ -1,7 +1,9 @@
 //using System;
 
+using System;
 using System.IO;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 //using System.Net.Sockets; 
@@ -15,6 +17,7 @@ namespace cssocketserver.server.core.module
     public abstract class WebSocketModule : sc.Module, sc.WebSocketConnection
     {
         public const int MAX_BUFFER = 5000;
+        protected const string SEC_WEBSOCKET_KEY_DIGEST = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
         protected string secWebSocketKey;
 
@@ -190,28 +193,34 @@ namespace cssocketserver.server.core.module
 
         public string getRequestAsString()
         {
-            //@todo tricky part, no explict way to scan stream
+            //@todo tricky part, no explict way to scan stream ,to byte to string
             //mv to field, cache it, reflush the stream
-            return new Scanner(networkStream, "UTF-8").useDelimiter("\\r\\n\\r\\n")
-                .next(); //bullshit is slow, is immediate release of object
+//            return new Scanner(networkStream, "UTF-8").useDelimiter("\\r\\n\\r\\n")
+//                .next(); //bullshit is slow, is immediate release of object
+            return new string("implementing");
         }
 
         public void sendHandshake()
         {
             //no text in class plz, mv, to cfg
-            responseByte = ("HTTP/1.1 101 Switching Protocols\r\n"
+            responseByte = System.Text.Encoding.Unicode.GetBytes("HTTP/1.1 101 Switching Protocols\r\n"
                             + "WebSocketConnection: Upgrade\r\n"
                             + "Upgrade: websocket\r\n"
                             + "Sec-WebSocket-Accept: "
-                            + DatatypeConverter
-                                .printBase64Binary(
-                                    MessageDigest
-                                        .getInstance("SHA-1")
-                                        .digest((secWebSocketKey + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11")
-                                            .getBytes("UTF-8")))
-                            + "\r\n\r\n")
-                .getBytes("UTF-8");
+                            + printBase64Binary()
+                            + "\r\n\r\n");
+            
             networkStream.Write(responseByte, 0, responseByte.Length);
+        }
+
+        private string printBase64Binary()
+        {
+            byte[] hashBytes = Encoding.UTF8.GetBytes(secWebSocketKey + SEC_WEBSOCKET_KEY_DIGEST);
+            SHA1 sha1 = SHA1Managed.Create(); //@todo refactor to in-fly or better field
+            byte[] cryptedByte = sha1.ComputeHash(hashBytes);
+            string cryptedString= Convert.ToBase64String(cryptedByte);
+            
+            return cryptedString;
         }
 
         public bool isGet()
